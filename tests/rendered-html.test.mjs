@@ -37,7 +37,9 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /同治五年三月初八/);
   assert.match(html, /校年札记/);
   assert.match(html, /我们的原则/);
+  assert.match(html, /seal-zhuanshu\.png/);
   assert.match(html, /同名年号不抢答/);
+  assert.doesNotMatch(html, /明<br\s*\/?>朔/);
   assert.doesNotMatch(html, /草拟史注|起草中/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
@@ -56,4 +58,5 @@ test("removes starter preview code and exposes project assets", async () => {
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(new URL("public/og.png", templateRoot));
+  await access(new URL("public/seal-zhuanshu.png", templateRoot));
 });
