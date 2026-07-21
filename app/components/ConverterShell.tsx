@@ -25,10 +25,6 @@ type ConvertResponse =
   | { ok: true; result: ConversionPayload }
   | { ok: false; error: string };
 
-type AnnotationResponse =
-  | { ok: true; annotation: string; provider: string }
-  | { ok: false; error: string };
-
 const examples = [
   "清顺治二年",
   "前赵嘉平元年",
@@ -66,10 +62,8 @@ const timeline = [
 export function ConverterShell() {
   const [text, setText] = useState("同治五年三月初八");
   const [result, setResult] = useState<ConversionPayload | null>(null);
-  const [annotation, setAnnotation] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [annotating, setAnnotating] = useState(false);
   const [activePrinciple, setActivePrinciple] =
     useState<(typeof principleBookmarks)[number]["id"]>("source");
 
@@ -87,7 +81,6 @@ export function ConverterShell() {
     event?.preventDefault();
     setLoading(true);
     setError("");
-    setAnnotation("");
 
     try {
       const response = await fetch("/api/convert", {
@@ -107,30 +100,6 @@ export function ConverterShell() {
       setError("错误：暂时无法完成转换，请稍后再试。");
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function annotate() {
-    if (!result) return;
-    setAnnotating(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/annotate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ result }),
-      });
-      const payload = (await response.json()) as AnnotationResponse;
-      if (!payload.ok) {
-        setError(payload.error);
-        return;
-      }
-      setAnnotation(payload.annotation);
-    } catch {
-      setError("错误：AI 史注暂时不可用。");
-    } finally {
-      setAnnotating(false);
     }
   }
 
@@ -236,22 +205,7 @@ export function ConverterShell() {
                     <strong>{result.orthodox.text}</strong>
                   </div>
                 </div>
-                {annotation && (
-                  <div className="annotation">
-                    <p>{annotation}</p>
-                  </div>
-                )}
-                <div className="actions">
-                  <span className="footer-note">月日暂按原文保留，未作农历/公历换算。</span>
-                  <button
-                    className="ghost-button"
-                    disabled={annotating}
-                    onClick={annotate}
-                    type="button"
-                  >
-                    {annotating ? "起草中" : "草拟史注"}
-                  </button>
-                </div>
+                <p className="footer-note">月日暂按原文保留，未作农历/公历换算。</p>
               </>
             ) : (
               <>

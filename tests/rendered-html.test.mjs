@@ -38,6 +38,7 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /校年札记/);
   assert.match(html, /我们的原则/);
   assert.match(html, /同名年号不抢答/);
+  assert.doesNotMatch(html, /草拟史注|起草中/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
 
@@ -55,13 +56,4 @@ test("removes starter preview code and exposes project assets", async () => {
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(new URL("public/og.png", templateRoot));
-});
-
-test("keeps AI annotation aligned to orthodoxy wording", async () => {
-  const route = await readFile(new URL("../app/api/annotate/route.ts", import.meta.url), "utf8");
-
-  assert.match(route, /依照正朔为/);
-  assert.match(route, /原文年号是来源纪年/);
-  assert.match(route, /不是别名/);
-  assert.match(route, /亦称\|又称\|也称/);
 });

@@ -185,8 +185,7 @@ h1 {
   font-weight: 700;
 }
 
-.primary-button:disabled,
-.ghost-button:disabled {
+.primary-button:disabled {
   cursor: wait;
   opacity: 0.58;
 }
@@ -198,16 +197,14 @@ h1 {
   margin-top: 14px;
 }
 
-.example-button,
-.ghost-button {
+.example-button {
   border: 1px solid rgba(52, 65, 54, 0.24);
   background: rgba(255, 255, 255, 0.36);
   color: var(--bronze-dark);
   padding: 9px 12px;
 }
 
-.example-button:hover,
-.ghost-button:hover {
+.example-button:hover {
   border-color: rgba(169, 52, 36, 0.42);
   color: var(--cinnabar-dark);
 }
@@ -357,27 +354,6 @@ h1 {
   font-size: 18px;
 }
 
-.annotation {
-  margin-top: 18px;
-  border-left: 3px solid var(--bronze);
-  background: rgba(255, 252, 241, 0.52);
-  padding: 14px 15px;
-  color: var(--ink-soft);
-  line-height: 1.72;
-}
-
-.annotation p {
-  margin: 0;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 16px;
-}
-
 .error {
   color: var(--cinnabar-dark);
 }
@@ -415,6 +391,7 @@ h1 {
 }
 
 .footer-note {
+  margin: 16px 0 0;
   color: rgba(33, 26, 20, 0.58);
   font-size: 12px;
   line-height: 1.6;
