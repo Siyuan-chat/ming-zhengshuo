@@ -56,3 +56,12 @@ test("removes starter preview code and exposes project assets", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(new URL("public/og.png", templateRoot));
 });
+
+test("keeps AI annotation aligned to orthodoxy wording", async () => {
+  const route = await readFile(new URL("../app/api/annotate/route.ts", import.meta.url), "utf8");
+
+  assert.match(route, /依照正朔为/);
+  assert.match(route, /原文年号是来源纪年/);
+  assert.match(route, /不是别名/);
+  assert.match(route, /亦称\|又称\|也称/);
+});
