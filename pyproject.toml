@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ming-zhengshuo"
+version = "0.1.0"
+description = "East Asian era-name and orthodoxy calendar converter"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "MingZhengshuo Contributors" }
+]
+
+[project.scripts]
+ming-zhengshuo = "ming_zhengshuo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ming_zhengshuo = ["data/*.json"]

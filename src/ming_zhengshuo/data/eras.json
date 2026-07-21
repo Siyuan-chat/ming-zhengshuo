@@ -1,0 +1,202 @@
+[
+  {
+    "id": "qing_shunzhi",
+    "name": "顺治",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1644,
+    "max_year": 18,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清世祖年号"
+  },
+  {
+    "id": "qing_kangxi",
+    "name": "康熙",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1662,
+    "max_year": 61,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清圣祖年号"
+  },
+  {
+    "id": "qing_yongzheng",
+    "name": "雍正",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1723,
+    "max_year": 13,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清世宗年号"
+  },
+  {
+    "id": "qing_qianlong",
+    "name": "乾隆",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1736,
+    "max_year": 60,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清高宗年号"
+  },
+  {
+    "id": "qing_jiaqing",
+    "name": "嘉庆",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1796,
+    "max_year": 25,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清仁宗年号"
+  },
+  {
+    "id": "qing_daoguang",
+    "name": "道光",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1821,
+    "max_year": 30,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清宣宗年号"
+  },
+  {
+    "id": "qing_xianfeng",
+    "name": "咸丰",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1851,
+    "max_year": 11,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清文宗年号"
+  },
+  {
+    "id": "qing_tongzhi",
+    "name": "同治",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1862,
+    "max_year": 13,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清穆宗年号"
+  },
+  {
+    "id": "qing_guangxu",
+    "name": "光绪",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1875,
+    "max_year": 34,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清德宗年号"
+  },
+  {
+    "id": "qing_xuantong",
+    "name": "宣统",
+    "polity": "清",
+    "region": "china",
+    "start_year": 1909,
+    "max_year": 3,
+    "aliases": [],
+    "calendar": "chinese_lunisolar",
+    "notes": "清逊帝年号"
+  },
+  {
+    "id": "japan_meiji",
+    "name": "明治",
+    "polity": "日本",
+    "region": "japan",
+    "start_year": 1868,
+    "max_year": 45,
+    "aliases": [],
+    "calendar": "japanese_lunisolar_then_gregorian",
+    "notes": "日本明治天皇年号"
+  },
+  {
+    "id": "japan_taisho",
+    "name": "大正",
+    "polity": "日本",
+    "region": "japan",
+    "start_year": 1912,
+    "max_year": 15,
+    "aliases": [],
+    "calendar": "gregorian",
+    "notes": "日本大正天皇年号"
+  },
+  {
+    "id": "japan_showa",
+    "name": "昭和",
+    "polity": "日本",
+    "region": "japan",
+    "start_year": 1926,
+    "max_year": 64,
+    "aliases": [],
+    "calendar": "gregorian",
+    "notes": "日本昭和天皇年号"
+  },
+  {
+    "id": "japan_heisei",
+    "name": "平成",
+    "polity": "日本",
+    "region": "japan",
+    "start_year": 1989,
+    "max_year": 31,
+    "aliases": [],
+    "calendar": "gregorian",
+    "notes": "日本平成天皇年号"
+  },
+  {
+    "id": "japan_reiwa",
+    "name": "令和",
+    "polity": "日本",
+    "region": "japan",
+    "start_year": 2019,
+    "max_year": null,
+    "aliases": [],
+    "calendar": "gregorian",
+    "notes": "日本令和年号"
+  },
+  {
+    "id": "korea_geonyang",
+    "name": "建阳",
+    "polity": "朝鲜",
+    "region": "korea",
+    "start_year": 1896,
+    "max_year": 2,
+    "aliases": [],
+    "calendar": "korean_lunisolar",
+    "notes": "朝鲜高宗年号"
+  },
+  {
+    "id": "korea_gwangmu",
+    "name": "光武",
+    "polity": "大韩帝国",
+    "region": "korea",
+    "start_year": 1897,
+    "max_year": 11,
+    "aliases": [],
+    "polity_aliases": ["朝鲜"],
+    "calendar": "korean_lunisolar",
+    "notes": "大韩帝国高宗年号"
+  },
+  {
+    "id": "korea_yunghui",
+    "name": "隆熙",
+    "polity": "大韩帝国",
+    "region": "korea",
+    "start_year": 1907,
+    "max_year": 4,
+    "aliases": [],
+    "polity_aliases": ["朝鲜"],
+    "calendar": "korean_lunisolar",
+    "notes": "大韩帝国纯宗年号"
+  }
+]

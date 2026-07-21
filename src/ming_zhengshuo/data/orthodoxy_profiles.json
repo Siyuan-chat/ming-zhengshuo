@@ -1,0 +1,106 @@
+{
+  "default": [
+    {
+      "id": "jin_western",
+      "start_year": 266,
+      "end_year": 317,
+      "target_polity": "西晋",
+      "mode": "official_era"
+    },
+    {
+      "id": "jin_eastern",
+      "start_year": 317,
+      "end_year": 420,
+      "target_polity": "东晋",
+      "mode": "official_era"
+    },
+    {
+      "id": "liu_song",
+      "start_year": 420,
+      "end_year": 479,
+      "target_polity": "刘宋",
+      "mode": "official_era"
+    },
+    {
+      "id": "southern_qi",
+      "start_year": 479,
+      "end_year": 502,
+      "target_polity": "南齐",
+      "mode": "official_era"
+    },
+    {
+      "id": "liang",
+      "start_year": 502,
+      "end_year": 557,
+      "target_polity": "南梁",
+      "mode": "official_era"
+    },
+    {
+      "id": "chen",
+      "start_year": 557,
+      "end_year": 589,
+      "target_polity": "南陈",
+      "mode": "official_era"
+    },
+    {
+      "id": "northern_song",
+      "start_year": 960,
+      "end_year": 1127,
+      "target_polity": "北宋",
+      "mode": "official_era"
+    },
+    {
+      "id": "southern_song",
+      "start_year": 1127,
+      "end_year": 1279,
+      "target_polity": "南宋",
+      "mode": "official_era"
+    },
+    {
+      "id": "xiangxing_continuous",
+      "start_year": 1279,
+      "end_year": 1368,
+      "target_polity": "南宋",
+      "mode": "continuous_era",
+      "base_era": "祥兴",
+      "base_year": 1278
+    },
+    {
+      "id": "ming",
+      "start_year": 1368,
+      "end_year": 1644,
+      "target_polity": "明",
+      "mode": "official_era"
+    },
+    {
+      "id": "southern_ming_official",
+      "start_year": 1644,
+      "end_year": 1647,
+      "target_polity": "南明",
+      "mode": "official_era"
+    },
+    {
+      "id": "yongli_continuous",
+      "start_year": 1647,
+      "end_year": 1912,
+      "target_polity": "南明",
+      "mode": "continuous_era",
+      "base_era": "永历",
+      "base_year": 1647
+    },
+    {
+      "id": "minguo",
+      "start_year": 1912,
+      "end_year": 1950,
+      "target_polity": "中华民国",
+      "mode": "minguo"
+    },
+    {
+      "id": "gregorian_after_1949",
+      "start_year": 1950,
+      "end_year": null,
+      "target_polity": "公元",
+      "mode": "gregorian"
+    }
+  ]
+}
