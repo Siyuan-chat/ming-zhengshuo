@@ -82,7 +82,7 @@ export function convertEra(input: string, profile = "default"): ConversionResult
   const era = resolveEra(parsed.eraName, parsed.eraYear, parsed.polityHint);
   const westernYear = era.start_year + parsed.eraYear - 1;
   const orthodox = westernToOrthodox(westernYear, parsed.rest, profile);
-  const sourceText = `${era.polity}${era.name}${intToCn(parsed.eraYear)}年${parsed.rest}`;
+  const sourceText = `${displayPolity(era.polity)}${era.name}${intToCn(parsed.eraYear)}年${parsed.rest}`;
   const output =
     orthodox.mode === "gregorian"
       ? `${sourceText} = ${orthodox.text}`
@@ -93,7 +93,7 @@ export function convertEra(input: string, profile = "default"): ConversionResult
     output,
     westernYear,
     source: {
-      polity: era.polity,
+      polity: displayPolity(era.polity),
       era: era.name,
       eraYear: parsed.eraYear,
       rest: parsed.rest,
@@ -174,9 +174,9 @@ function resolveEra(eraName: string, eraYear: number, polityHint: string | null)
   if (candidates.length > 1) {
     const lines = ["该年号存在多个候选："];
     candidates.forEach((era, index) => {
-      lines.push(`${index + 1}. ${era.polity}${eraName}${intToCn(eraYear)}年`);
+      lines.push(`${index + 1}. ${displayPolity(era.polity)}${eraName}${intToCn(eraYear)}年`);
     });
-    lines.push(`请指定政权，例如：${candidates[0].polity}${eraName}${intToCn(eraYear)}年`);
+    lines.push(`请指定政权，例如：${displayPolity(candidates[0].polity)}${eraName}${intToCn(eraYear)}年`);
     throw new Error(lines.join("\n"));
   }
 
@@ -199,7 +199,7 @@ function westernToOrthodox(westernYear: number, rest: string, profile: string) {
   if (segment.mode === "continuous_era") {
     const eraYear = westernYear - (segment.base_year ?? westernYear) + 1;
     const era = segment.base_era ?? "连续";
-    const prefix = era === "永历" ? "大明" : era === "祥兴" ? "大宋" : segment.target_polity;
+    const prefix = era === "永历" ? "大明" : era === "祥兴" ? "宋" : displayPolity(segment.target_polity);
     return {
       polity: segment.target_polity,
       era,
@@ -288,12 +288,22 @@ function findOfficialEra(westernYear: number, targetPolity: string): Era | null 
 
 function officialPrefix(targetPolity: string) {
   if (["明", "南明"].includes(targetPolity)) return "大明";
-  if (["北宋", "南宋"].includes(targetPolity)) return "大宋";
-  if (targetPolity === "刘宋") return "宋";
-  if (targetPolity === "南齐") return "齐";
-  if (targetPolity === "南梁") return "梁";
-  if (targetPolity === "南陈") return "陈";
-  return targetPolity;
+  if (["北宋", "南宋"].includes(targetPolity)) return "宋";
+  return displayPolity(targetPolity);
+}
+
+function displayPolity(polity: string) {
+  const names: Record<string, string> = {
+    西晋: "晋",
+    东晋: "晋",
+    刘宋: "宋",
+    北宋: "宋",
+    南宋: "宋",
+    南齐: "齐",
+    南梁: "梁",
+    南陈: "陈",
+  };
+  return names[polity] ?? polity;
 }
 
 function knownHints() {

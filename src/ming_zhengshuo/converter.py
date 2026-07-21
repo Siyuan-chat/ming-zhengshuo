@@ -22,9 +22,14 @@ class AmbiguousEraError(MingZhengshuoError):
         lines = ["该年号存在多个候选："]
         year = int_to_cn(self.era_year)
         for index, era in enumerate(self.candidates, start=1):
-            lines.append(f"{index}. {era['polity']}{self.era_name}{year}年")
+            lines.append(
+                f"{index}. {_display_polity(era['polity'])}{self.era_name}{year}年"
+            )
         if self.candidates:
-            example = f"{self.candidates[0]['polity']}{self.era_name}{year}年"
+            example = (
+                f"{_display_polity(self.candidates[0]['polity'])}"
+                f"{self.era_name}{year}年"
+            )
             lines.append(f"请指定政权，例如：{example}")
         return "\n".join(lines)
 
@@ -94,7 +99,7 @@ def convert_structured(text: str, profile: str = "default") -> dict[str, Any]:
     return {
         "input": text,
         "source": {
-            "polity": era["polity"],
+            "polity": _display_polity(era["polity"]),
             "era": era["name"],
             "era_year": parsed["era_year"],
             "rest": rest,
@@ -230,7 +235,7 @@ def western_to_orthodox_structured(
 
 
 def _format_source(era: dict[str, Any], era_year: int, rest: str) -> str:
-    return f"{era['polity']}{era['name']}{int_to_cn(era_year)}年{rest}"
+    return f"{_display_polity(era['polity'])}{era['name']}{int_to_cn(era_year)}年{rest}"
 
 
 def _hint_matches_era(polity_hint: str, era: dict[str, Any]) -> bool:
@@ -251,24 +256,30 @@ def _dynastic_prefix(era_name: str, target_polity: str) -> str:
     if era_name == "永历":
         return "大明"
     if era_name == "祥兴":
-        return "大宋"
-    return target_polity
+        return "宋"
+    return _display_polity(target_polity)
 
 
 def _official_prefix(target_polity: str) -> str:
     if target_polity in {"明", "南明"}:
         return "大明"
     if target_polity in {"北宋", "南宋"}:
-        return "大宋"
-    if target_polity == "刘宋":
         return "宋"
-    if target_polity == "南齐":
-        return "齐"
-    if target_polity == "南梁":
-        return "梁"
-    if target_polity == "南陈":
-        return "陈"
-    return target_polity
+    return _display_polity(target_polity)
+
+
+def _display_polity(polity: str) -> str:
+    names = {
+        "西晋": "晋",
+        "东晋": "晋",
+        "刘宋": "宋",
+        "北宋": "宋",
+        "南宋": "宋",
+        "南齐": "齐",
+        "南梁": "梁",
+        "南陈": "陈",
+    }
+    return names.get(polity, polity)
 
 
 def _find_official_era(

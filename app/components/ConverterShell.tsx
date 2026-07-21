@@ -47,7 +47,7 @@ const principleBookmarks = [
     id: "orthodoxy",
     title: "正朔对照",
     principle: "原则二：以默认正统线归正朔。",
-    detail: "五胡十六国归晋，北朝归南朝，辽金元归宋明，南明续明统；南朝输出宋、齐、梁、陈，不加“南”字。",
+    detail: "五胡十六国归晋，北朝归南朝，辽金元归宋明，南明续明统；晋不分东西，宋不分南北，南朝输出宋、齐、梁、陈。",
   },
   {
     id: "boundary",
