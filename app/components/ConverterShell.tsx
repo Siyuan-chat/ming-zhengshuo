@@ -176,10 +176,6 @@ export function ConverterShell() {
         <aside className="side">
           <div className="visual-plate" aria-hidden="true">
             <img className="visual-image" src="/og.png" alt="" />
-            <div className="plate-seal">
-              <img src="/seal-zhuanshu.png" alt="" />
-            </div>
-            <span>凡纪年，皆有其所归。</span>
           </div>
 
           <section className="result-panel" aria-live="polite">

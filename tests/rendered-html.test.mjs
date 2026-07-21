@@ -44,6 +44,7 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /同名年号不抢答/);
   assert.doesNotMatch(html, /明<br\s*\/?>朔/);
   assert.doesNotMatch(html, /favicon\.svg/);
+  assert.doesNotMatch(html, /plate-seal/);
   assert.doesNotMatch(html, /草拟史注|起草中/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
