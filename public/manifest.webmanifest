@@ -1,0 +1,17 @@
+{
+  "name": "明正朔",
+  "short_name": "明正朔",
+  "description": "东亚历代年号与默认正统线纪年转换工具。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#efe1c6",
+  "theme_color": "#8f2418",
+  "icons": [
+    {
+      "src": "/seal-zhuanshu.png",
+      "sizes": "200x200",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

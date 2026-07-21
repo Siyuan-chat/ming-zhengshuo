@@ -38,8 +38,12 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /校年札记/);
   assert.match(html, /我们的原则/);
   assert.match(html, /seal-zhuanshu\.png/);
+  assert.match(html, /favicon\.png/);
+  assert.match(html, /apple-touch-icon\.png/);
+  assert.match(html, /manifest\.webmanifest/);
   assert.match(html, /同名年号不抢答/);
   assert.doesNotMatch(html, /明<br\s*\/?>朔/);
+  assert.doesNotMatch(html, /favicon\.svg/);
   assert.doesNotMatch(html, /草拟史注|起草中/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
@@ -54,9 +58,17 @@ test("removes starter preview code and exposes project assets", async () => {
   assert.match(page, /<ConverterShell \/>/);
   assert.match(layout, /title:\s*"明正朔"/);
   assert.match(layout, /\/og\.png/);
+  assert.match(layout, /\/favicon\.png/);
+  assert.match(layout, /\/apple-touch-icon\.png/);
+  assert.match(layout, /\/manifest\.webmanifest/);
+  assert.doesNotMatch(layout, /\/favicon\.svg/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(new URL("public/og.png", templateRoot));
   await access(new URL("public/seal-zhuanshu.png", templateRoot));
+  await access(new URL("public/favicon.png", templateRoot));
+  await access(new URL("public/apple-touch-icon.png", templateRoot));
+  await access(new URL("public/manifest.webmanifest", templateRoot));
+  await assert.rejects(access(new URL("public/favicon.svg", templateRoot)));
 });

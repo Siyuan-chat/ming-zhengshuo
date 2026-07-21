@@ -4,9 +4,12 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "明正朔",
   description: "东亚历代年号与默认正统线纪年转换工具。",
+  applicationName: "明正朔",
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: [{ url: "/favicon.png", type: "image/png", sizes: "200x200" }],
+    shortcut: "/favicon.png",
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "200x200" }],
   },
   openGraph: {
     title: "明正朔",
