@@ -204,10 +204,10 @@ def western_to_orthodox_structured(
         }
 
     if mode == "official_era":
+        prefix = _official_prefix(segment["target_polity"])
         official = _find_official_era(western_year, segment["target_polity"])
         if official:
             era_year = western_year - int(official["start_year"]) + 1
-            prefix = _official_prefix(segment["target_polity"])
             return {
                 "polity": segment["target_polity"],
                 "era": official["name"],
@@ -223,7 +223,7 @@ def western_to_orthodox_structured(
             "era": "正朔待补",
             "era_year": western_year,
             "mode": mode,
-            "text": f"{segment['target_polity']}正朔待补（公元{western_year}年{rest}）",
+            "text": f"{prefix}正朔待补（公元{western_year}年{rest}）",
         }
 
     raise MingZhengshuoError(f"错误：暂不支持正统线模式“{mode}”。")
@@ -260,6 +260,14 @@ def _official_prefix(target_polity: str) -> str:
         return "大明"
     if target_polity in {"北宋", "南宋"}:
         return "大宋"
+    if target_polity == "刘宋":
+        return "宋"
+    if target_polity == "南齐":
+        return "齐"
+    if target_polity == "南梁":
+        return "梁"
+    if target_polity == "南陈":
+        return "陈"
     return target_polity
 
 

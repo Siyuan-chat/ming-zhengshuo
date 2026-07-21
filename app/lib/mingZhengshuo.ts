@@ -231,6 +231,7 @@ function westernToOrthodox(westernYear: number, rest: string, profile: string) {
   }
 
   if (segment.mode === "official_era") {
+    const prefix = officialPrefix(segment.target_polity);
     const official = findOfficialEra(westernYear, segment.target_polity);
     if (official) {
       const eraYear = westernYear - official.start_year + 1;
@@ -239,17 +240,19 @@ function westernToOrthodox(westernYear: number, rest: string, profile: string) {
         era: official.name,
         eraYear,
         mode: segment.mode,
-        text: `${officialPrefix(segment.target_polity)}${official.name}${intToCn(eraYear)}年${rest}`,
+        text: `${prefix}${official.name}${intToCn(eraYear)}年${rest}`,
       };
     }
   }
 
+  const fallbackPrefix =
+    segment.mode === "official_era" ? officialPrefix(segment.target_polity) : segment.target_polity;
   return {
     polity: segment.target_polity,
     era: "正朔待补",
     eraYear: westernYear,
     mode: segment.mode,
-    text: `${segment.target_polity}正朔待补（公元${westernYear}年${rest}）`,
+    text: `${fallbackPrefix}正朔待补（公元${westernYear}年${rest}）`,
   };
 }
 
@@ -286,6 +289,10 @@ function findOfficialEra(westernYear: number, targetPolity: string): Era | null 
 function officialPrefix(targetPolity: string) {
   if (["明", "南明"].includes(targetPolity)) return "大明";
   if (["北宋", "南宋"].includes(targetPolity)) return "大宋";
+  if (targetPolity === "刘宋") return "宋";
+  if (targetPolity === "南齐") return "齐";
+  if (targetPolity === "南梁") return "梁";
+  if (targetPolity === "南陈") return "陈";
   return targetPolity;
 }
 

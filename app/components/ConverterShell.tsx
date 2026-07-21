@@ -31,9 +31,9 @@ type AnnotationResponse =
 
 const examples = [
   "清顺治二年",
+  "前赵嘉平元年",
   "北魏太和十年",
   "元至元十六年",
-  "日本昭和二十年八月十五",
 ];
 
 const timeline = [
