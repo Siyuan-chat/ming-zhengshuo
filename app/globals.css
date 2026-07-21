@@ -220,11 +220,44 @@ h1 {
 }
 
 .tag {
+  border: 0;
   border-left: 3px solid var(--cinnabar);
   background: rgba(102, 112, 91, 0.09);
   color: var(--bronze-dark);
   padding: 8px 11px;
   font-size: 13px;
+  text-align: left;
+}
+
+.tag:hover,
+.tag[aria-pressed="true"] {
+  background: rgba(169, 52, 36, 0.1);
+  color: var(--cinnabar-dark);
+}
+
+.principle-output {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  color: var(--ink-soft);
+  line-height: 1.68;
+}
+
+.principle-output span {
+  color: var(--bronze-dark);
+  font-size: 12px;
+}
+
+.principle-output strong {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 18px;
+}
+
+.principle-output p {
+  margin: 0;
 }
 
 .side {

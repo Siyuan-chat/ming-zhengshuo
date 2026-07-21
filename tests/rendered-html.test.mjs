@@ -36,6 +36,8 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /辨年号，归正朔/);
   assert.match(html, /同治五年三月初八/);
   assert.match(html, /校年札记/);
+  assert.match(html, /我们的原则/);
+  assert.match(html, /同名年号不抢答/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
 

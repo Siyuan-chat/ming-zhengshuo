@@ -36,6 +36,27 @@ const examples = [
   "元至元十六年",
 ];
 
+const principleBookmarks = [
+  {
+    id: "source",
+    title: "年号溯源",
+    principle: "原则一：先辨其号所出。",
+    detail: "同名年号不抢答，不把政权偷换成默认候选；能由国号判定就直断，不能判定就提示补上政权名。",
+  },
+  {
+    id: "orthodoxy",
+    title: "正朔对照",
+    principle: "原则二：以默认正统线归正朔。",
+    detail: "五胡十六国归晋，北朝归南朝，辽金元归宋明，南明续明统；南朝输出宋、齐、梁、陈，不加“南”字。",
+  },
+  {
+    id: "boundary",
+    title: "纪年换算",
+    principle: "原则三：边界年从严，月日不擅改。",
+    detail: "公元年份只作桥梁；输入中的月日原文保留。1644 归崇祯十七年，1645 归弘光，1646 归隆武，1647 起归永历。",
+  },
+] as const;
+
 const timeline = [
   ["1647", "永历元年；明清鼎革后默认续用南明正朔"],
   ["1912", "民国元年；辛亥以后归民国纪年"],
@@ -49,6 +70,11 @@ export function ConverterShell() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [annotating, setAnnotating] = useState(false);
+  const [activePrinciple, setActivePrinciple] =
+    useState<(typeof principleBookmarks)[number]["id"]>("source");
+
+  const selectedPrinciple =
+    principleBookmarks.find((item) => item.id === activePrinciple) ?? principleBookmarks[0];
 
   const status = useMemo(() => {
     if (loading) return "校年中";
@@ -157,11 +183,24 @@ export function ConverterShell() {
                 </button>
               ))}
             </div>
-            <div className="tags" aria-label="功能标签">
-              <span className="tag">年号溯源</span>
-              <span className="tag">正朔对照</span>
-              <span className="tag">纪年换算</span>
+            <div className="tags" aria-label="原则书签">
+              {principleBookmarks.map((bookmark) => (
+                <button
+                  aria-pressed={activePrinciple === bookmark.id}
+                  className="tag"
+                  key={bookmark.id}
+                  onClick={() => setActivePrinciple(bookmark.id)}
+                  type="button"
+                >
+                  {bookmark.title}
+                </button>
+              ))}
             </div>
+            <output className="principle-output" aria-live="polite">
+              <span>我们的原则</span>
+              <strong>{selectedPrinciple.principle}</strong>
+              <p>{selectedPrinciple.detail}</p>
+            </output>
           </form>
         </section>
 
