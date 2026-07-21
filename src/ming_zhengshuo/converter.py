@@ -207,13 +207,14 @@ def western_to_orthodox_structured(
         official = _find_official_era(western_year, segment["target_polity"])
         if official:
             era_year = western_year - int(official["start_year"]) + 1
+            prefix = _official_prefix(segment["target_polity"])
             return {
                 "polity": segment["target_polity"],
                 "era": official["name"],
                 "era_year": era_year,
                 "mode": mode,
                 "text": (
-                    f"{segment['target_polity']}{official['name']}"
+                    f"{prefix}{official['name']}"
                     f"{int_to_cn(era_year)}年{rest}"
                 ),
             }
@@ -250,6 +251,14 @@ def _dynastic_prefix(era_name: str, target_polity: str) -> str:
     if era_name == "永历":
         return "大明"
     if era_name == "祥兴":
+        return "大宋"
+    return target_polity
+
+
+def _official_prefix(target_polity: str) -> str:
+    if target_polity in {"明", "南明"}:
+        return "大明"
+    if target_polity in {"北宋", "南宋"}:
         return "大宋"
     return target_polity
 

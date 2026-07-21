@@ -7,6 +7,7 @@ type Era = {
   polity: string;
   region: string;
   start_year: number;
+  end_year?: number;
   max_year: number | null;
   aliases?: string[];
   polity_aliases?: string[];
@@ -229,6 +230,20 @@ function westernToOrthodox(westernYear: number, rest: string, profile: string) {
     };
   }
 
+  if (segment.mode === "official_era") {
+    const official = findOfficialEra(westernYear, segment.target_polity);
+    if (official) {
+      const eraYear = westernYear - official.start_year + 1;
+      return {
+        polity: segment.target_polity,
+        era: official.name,
+        eraYear,
+        mode: segment.mode,
+        text: `${officialPrefix(segment.target_polity)}${official.name}${intToCn(eraYear)}年${rest}`,
+      };
+    }
+  }
+
   return {
     polity: segment.target_polity,
     era: "正朔待补",
@@ -252,6 +267,26 @@ function findSegment(westernYear: number, profile: string): OrthodoxySegment {
     throw new Error(`错误：正统线“${profile}”没有覆盖公元${westernYear}年。`);
   }
   return segment;
+}
+
+function findOfficialEra(westernYear: number, targetPolity: string): Era | null {
+  for (const era of eras) {
+    if (era.polity !== targetPolity) continue;
+    const endYear =
+      era.end_year ?? (era.max_year === null ? null : era.start_year + era.max_year);
+    if (endYear === null) {
+      if (westernYear >= era.start_year) return era;
+    } else if (westernYear >= era.start_year && westernYear < endYear) {
+      return era;
+    }
+  }
+  return null;
+}
+
+function officialPrefix(targetPolity: string) {
+  if (["明", "南明"].includes(targetPolity)) return "大明";
+  if (["北宋", "南宋"].includes(targetPolity)) return "大宋";
+  return targetPolity;
 }
 
 function knownHints() {

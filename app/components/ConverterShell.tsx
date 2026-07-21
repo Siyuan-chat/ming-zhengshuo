@@ -30,10 +30,10 @@ type AnnotationResponse =
   | { ok: false; error: string };
 
 const examples = [
-  "同治五年三月初八",
+  "清顺治二年",
+  "北魏太和十年",
+  "元至元十六年",
   "日本昭和二十年八月十五",
-  "朝鲜光武三年四月十五",
-  "令和六年五月一日",
 ];
 
 const timeline = [

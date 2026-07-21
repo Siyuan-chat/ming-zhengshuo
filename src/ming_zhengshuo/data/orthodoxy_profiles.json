@@ -68,13 +68,13 @@
     {
       "id": "ming",
       "start_year": 1368,
-      "end_year": 1644,
+      "end_year": 1645,
       "target_polity": "明",
       "mode": "official_era"
     },
     {
       "id": "southern_ming_official",
-      "start_year": 1644,
+      "start_year": 1645,
       "end_year": 1647,
       "target_polity": "南明",
       "mode": "official_era"
