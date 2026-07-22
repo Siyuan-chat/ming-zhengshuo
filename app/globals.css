@@ -139,7 +139,8 @@ h1 {
 
 .tool-panel,
 .result-panel,
-.ledger {
+.ledger,
+.public-note {
   border: 1px solid var(--line);
   background: rgba(251, 243, 223, 0.86);
   box-shadow: 0 24px 80px var(--shadow);
@@ -347,13 +348,45 @@ h1 {
   color: var(--cinnabar-dark);
 }
 
-.ledger {
+.ledger,
+.public-note {
   padding: 20px 22px;
 }
 
-.ledger h2 {
+.ledger h2,
+.public-note h2 {
   margin-bottom: 14px;
   font-size: 22px;
+}
+
+.public-note {
+  display: grid;
+  gap: 12px;
+}
+
+.public-note p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.68;
+}
+
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feature-list span {
+  border: 1px solid rgba(169, 52, 36, 0.22);
+  background: rgba(169, 52, 36, 0.08);
+  color: var(--cinnabar-dark);
+  padding: 6px 9px;
+  font-size: 12px;
+}
+
+.defense-note {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
 }
 
 .timeline {

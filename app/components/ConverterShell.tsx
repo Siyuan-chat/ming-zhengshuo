@@ -59,6 +59,17 @@ const timeline = [
   ["1950", "第一版按年份简化，自此输出公元纪年"],
 ];
 
+const searchFeatures = [
+  "年号转换",
+  "正朔纪年",
+  "东亚纪年",
+  "五胡十六国",
+  "两晋南北朝",
+  "辽金元",
+  "南明永历",
+  "民国纪年",
+];
+
 export function ConverterShell() {
   const [text, setText] = useState("同治五年三月初八");
   const [result, setResult] = useState<ConversionPayload | null>(null);
@@ -119,7 +130,7 @@ export function ConverterShell() {
             </div>
             <p className="subtitle">
               辨年号，归正朔。输入清、日本近现代、朝鲜与大韩帝国年号，
-              换算公元年份，并依默认正统线归入永历、民国或公元纪年。
+              换算公元年份，并依默认正统线归入晋、宋、明、永历、民国或公元纪年。
             </p>
           </header>
 
@@ -227,6 +238,22 @@ export function ConverterShell() {
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className="public-note" aria-label="规则边界与公开说明">
+            <h2>规则边界</h2>
+            <p>
+              本站是一套可复核的历史纪年换算规则，不宣称排除其他史观。争议处按页面明示的
+              默认正统线输出；若需订正，请以具体年号、年份边界与史料依据为准。
+            </p>
+            <div className="feature-list" aria-label="搜索关键词">
+              {searchFeatures.map((feature) => (
+                <span key={feature}>{feature}</span>
+              ))}
+            </div>
+            <p className="defense-note">
+              公开版不开放评论、上传或外部脚本输入；转换请求只接收短文本年号，超长或异常请求会被拒绝。
+            </p>
           </section>
         </aside>
       </div>
