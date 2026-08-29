@@ -95,6 +95,26 @@ button {
   margin-bottom: 22px;
 }
 
+.language-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.language-switch button {
+  border: 1px solid rgba(52, 65, 54, 0.24);
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--bronze-dark);
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.language-switch button[aria-pressed="true"] {
+  border-color: var(--cinnabar);
+  background: rgba(169, 52, 36, 0.1);
+  color: var(--cinnabar-dark);
+}
+
 .brand-row {
   display: flex;
   align-items: center;

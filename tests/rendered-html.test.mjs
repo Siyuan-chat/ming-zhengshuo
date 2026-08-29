@@ -84,6 +84,14 @@ test("removes starter preview code and exposes project assets", async () => {
   assert.doesNotMatch(layout, /\/favicon\.svg/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
+  const converter = await readFile(
+    new URL("../app/components/ConverterShell.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(converter, /Bidirectional East Asian era interchange/);
+  assert.match(converter, /東アジア元号の双方向変換と正朔対照/);
+  assert.match(converter, /calendarMode/);
+
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(new URL("public/og.png", templateRoot));
   await access(new URL("public/seal-zhuanshu.png", templateRoot));
