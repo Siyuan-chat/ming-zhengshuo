@@ -36,11 +36,12 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>明正朔｜年号转换与正统纪年工具<\/title>/);
+  assert.match(html, /<title>明正朔｜东亚历史年号双向互换工具<\/title>/);
   assert.match(response.headers.get("x-content-type-options") ?? "", /nosniff/i);
   assert.match(response.headers.get("x-frame-options") ?? "", /DENY/i);
   assert.match(response.headers.get("content-security-policy") ?? "", /frame-ancestors 'none'/);
-  assert.match(html, /东亚年号与正统线转换/);
+  assert.match(html, /东亚年号双向互换与正统线转换/);
+  assert.match(html, /历法：保留原月日（接口已预留）/);
   assert.match(html, /辨年号，归正朔/);
   assert.match(html, /同治五年三月初八/);
   assert.match(html, /校年札记/);
@@ -72,7 +73,7 @@ test("removes starter preview code and exposes project assets", async () => {
   ]);
 
   assert.match(page, /<ConverterShell \/>/);
-  assert.match(layout, /年号转换与正统纪年工具/);
+  assert.match(layout, /东亚历史年号双向互换工具/);
   assert.match(layout, /metadataBase/);
   assert.match(layout, /canonical/);
   assert.match(layout, /SoftwareApplication/);
@@ -131,4 +132,21 @@ test("converts ancient Japanese eras through the Tang and Southern Tang line", a
     assert.equal(response.status, 200);
     assert.equal((await response.json()).result.output, output);
   }
+});
+
+test("interchanges Gregorian and era years with an explicit calendar contract", async () => {
+  const response = await fetchWorker("/api/convert", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      text: "公元645年",
+      target: "japan",
+      calendarMode: "preserve",
+    }),
+  });
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.result.output, "公元645年 = 日本大化元年");
+  assert.equal(payload.result.calendar.precision, "year");
+  assert.equal(payload.result.calendar.dayConversionApplied, false);
 });

@@ -1,0 +1,8 @@
+interface:
+  display_name: "明正朔"
+  short_description: "东亚历史年号与公元年份双向互换"
+  brand_color: "#A93424"
+  default_prompt: "Use $ming-zhengshuo to cross-convert this historical era year and explain any ambiguity."
+
+policy:
+  allow_implicit_invocation: true

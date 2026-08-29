@@ -1,14 +1,15 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { convertEra, type ConversionResult } from "@/app/lib/mingZhengshuo";
+import { interchangeEra, type InterchangeResult } from "@/app/lib/mingZhengshuo";
 
-type ConversionPayload = ConversionResult;
+type ConversionPayload = InterchangeResult;
 
 const examples = [
   "清顺治二年",
   "日本大化元年",
   "日本庆应三年",
+  "公元645年",
   "北魏太和十年",
 ];
 
@@ -58,6 +59,7 @@ const searchFeatures = [
 export function ConverterShell() {
   const [text, setText] = useState("同治五年三月初八");
   const [result, setResult] = useState<ConversionPayload | null>(null);
+  const [target, setTarget] = useState("orthodox");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [activePrinciple, setActivePrinciple] =
@@ -68,7 +70,7 @@ export function ConverterShell() {
 
   const status = useMemo(() => {
     if (loading) return "校年中";
-    if (result) return "已归正朔";
+    if (result) return "互换完成";
     if (error) return "待更正";
     return "待输入";
   }, [error, loading, result]);
@@ -83,7 +85,7 @@ export function ConverterShell() {
       if (input.length > 80) {
         throw new Error("错误：输入过长，请控制在 80 字以内。");
       }
-      setResult(convertEra(input));
+      setResult(interchangeEra(input, target, "preserve"));
     } catch (caught) {
       setResult(null);
       setError(caught instanceof Error ? caught.message : "错误：转换失败。");
@@ -102,13 +104,13 @@ export function ConverterShell() {
                 <img src="seal-zhuanshu.png" alt="" />
               </div>
               <div>
-                <p className="eyebrow">东亚年号与正统线转换</p>
+                <p className="eyebrow">东亚年号双向互换与正统线转换</p>
                 <h1>明正朔</h1>
               </div>
             </div>
             <p className="subtitle">
               辨年号，归正朔。输入清、日本自大化以来、朝鲜与大韩帝国年号，
-              换算公元年份，并依默认正统线归入晋、隋唐、后唐、南唐、宋明、永历、民国或公元纪年。
+              可由年号换算公元，也可由公元反查日本、中国、朝鲜及并行年号；亦可依默认正统线归年。
             </p>
           </header>
 
@@ -126,8 +128,24 @@ export function ConverterShell() {
                 autoComplete="off"
               />
               <button className="primary-button" disabled={loading} type="submit">
-                {loading ? "校年中" : "归正朔"}
+                {loading ? "校年中" : "开始互换"}
               </button>
+            </div>
+            <div className="target-row">
+              <label htmlFor="target-select">转换目标</label>
+              <select
+                id="target-select"
+                value={target}
+                onChange={(event) => setTarget(event.target.value)}
+              >
+                <option value="orthodox">默认正朔</option>
+                <option value="gregorian">公元年份</option>
+                <option value="japan">日本年号</option>
+                <option value="china">中国年号</option>
+                <option value="korea">朝鲜／韩国年号</option>
+                <option value="all">全部并行年号</option>
+              </select>
+              <span>历法：保留原月日（接口已预留）</span>
             </div>
             <div className="examples" aria-label="示例输入">
               {examples.map((example) => (
@@ -180,8 +198,9 @@ export function ConverterShell() {
                   <div className="fact">
                     <span>来源</span>
                     <strong>
-                      {result.source.polity}
-                      {result.source.era}
+                      {result.source.kind === "gregorian"
+                        ? "公元纪年"
+                        : `${result.source.polity}${result.source.era}`}
                     </strong>
                   </div>
                   <div className="fact">
@@ -189,16 +208,18 @@ export function ConverterShell() {
                     <strong>公元{result.westernYear}年</strong>
                   </div>
                   <div className="fact">
-                    <span>所归正朔</span>
-                    <strong>{result.orthodox.text}</strong>
+                    <span>转换目标</span>
+                    <strong>{result.matches.map((item) => item.text).join("、")}</strong>
                   </div>
                 </div>
-                <p className="footer-note">月日暂按原文保留，未作农历/公历换算。</p>
+                <p className="footer-note">
+                  精度：年份。{result.calendar.note} API 已预留 calendarMode，未来可接入精确历法换算。
+                </p>
               </>
             ) : (
               <>
                 <p className="placeholder">
-                  显示来源年号、公元年份与默认正统线归属；若年号年份超出范围，
+                  支持年号与公元双向互换，并显示默认正统线或指定地区的并行年号；若年份超出范围，
                   或存在同名歧义，将在此处列明。
                 </p>
                 {error && <p className="placeholder error">{error}</p>}

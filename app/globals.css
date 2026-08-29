@@ -40,7 +40,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -189,6 +190,23 @@ h1 {
 .primary-button:disabled {
   cursor: wait;
   opacity: 0.58;
+}
+
+.target-row {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.target-row select {
+  border: 1px solid rgba(52, 65, 54, 0.26);
+  background: rgba(255, 252, 241, 0.86);
+  color: var(--ink);
+  padding: 9px 12px;
 }
 
 .examples {
@@ -461,6 +479,10 @@ h1 {
 
   .primary-button {
     min-height: 48px;
+  }
+
+  .target-row {
+    grid-template-columns: 1fr;
   }
 
   .facts {

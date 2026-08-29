@@ -68,6 +68,15 @@ class NoOrthodoxSegmentError(MingZhengshuoError):
         return f"错误：正统线“{self.profile}”没有覆盖公元{self.western_year}年。"
 
 
+@dataclass(frozen=True)
+class NoTargetEraError(MingZhengshuoError):
+    western_year: int
+    target: str
+
+    def __str__(self) -> str:
+        return f"错误：公元{self.western_year}年没有匹配目标“{self.target}”的年号数据。"
+
+
 def convert(text: str, profile: str = "default") -> str:
     try:
         return convert_structured(text, profile=profile)["output"]
@@ -113,6 +122,120 @@ def convert_structured(text: str, profile: str = "default") -> dict[str, Any]:
         },
         "output": output,
     }
+
+
+def interchange(
+    text: str,
+    target: str = "all",
+    profile: str = "default",
+    calendar_mode: str = "preserve",
+) -> str:
+    """Convert either a Gregorian year or an era year to a selected target."""
+    try:
+        return interchange_structured(
+            text,
+            target=target,
+            profile=profile,
+            calendar_mode=calendar_mode,
+        )["output"]
+    except (MingZhengshuoError, ParseError, ValueError) as exc:
+        return str(exc)
+
+
+def interchange_structured(
+    text: str,
+    target: str = "all",
+    profile: str = "default",
+    calendar_mode: str = "preserve",
+) -> dict[str, Any]:
+    if calendar_mode != "preserve":
+        raise MingZhengshuoError(
+            f"错误：历法模式“{calendar_mode}”尚未实现；当前仅支持 preserve（月日原样保留）。"
+        )
+    source = _parse_interchange_source(text)
+    western_year = source["western_year"]
+    rest = source["rest"]
+    normalized_target = target.strip()
+
+    if normalized_target in {"gregorian", "ce", "公元", "西历", "西曆", "西暦"}:
+        targets = [_gregorian_result(western_year, rest)]
+        target_kind = "gregorian"
+    elif normalized_target in {"orthodox", "正朔", "default"}:
+        targets = [western_to_orthodox_structured(western_year, rest, profile)]
+        target_kind = "orthodox"
+    else:
+        targets = western_to_eras_structured(western_year, target=normalized_target)
+        if not targets:
+            raise NoTargetEraError(western_year, normalized_target)
+        for item in targets:
+            item["text"] = f"{item['text']}{rest}"
+        target_kind = "eras"
+
+    parts = [source["text"]]
+    gregorian_text = f"公元{western_year}年{rest}"
+    if source["kind"] != "gregorian" and target_kind != "gregorian":
+        parts.append(gregorian_text)
+    for item in targets:
+        if item["text"] not in parts:
+            parts.append(item["text"])
+
+    return {
+        "input": text,
+        "source": source,
+        "western_year": western_year,
+        "target": normalized_target,
+        "matches": targets,
+        "calendar": {
+            "mode": calendar_mode,
+            "source_calendar": source.get("calendar", "gregorian"),
+            "target_calendars": sorted(
+                {
+                    item.get("calendar", "rule_based_or_gregorian")
+                    for item in targets
+                }
+            ),
+            "precision": "year",
+            "day_conversion_applied": False,
+            "preserved_text": rest,
+            "note": "月日原样保留，尚未进行阴阳历、儒略历或格里历之间的换算。",
+        },
+        "output": " = ".join(parts),
+    }
+
+
+def western_to_eras_structured(
+    western_year: int,
+    target: str = "all",
+) -> list[dict[str, Any]]:
+    """Return every matching era for a Gregorian year and target selector."""
+    matches: list[dict[str, Any]] = []
+    for era in load_eras():
+        if not _target_matches_era(target, era):
+            continue
+        start_year = int(era["start_year"])
+        end_year = _era_end_year(era)
+        if western_year < start_year or (end_year is not None and western_year >= end_year):
+            continue
+        era_year = western_year - start_year + 1
+        matches.append(
+            {
+                "id": era["id"],
+                "polity": era["polity"],
+                "region": era.get("region"),
+                "era": era["name"],
+                "era_year": era_year,
+                "calendar": era.get("calendar"),
+                "text": _format_source(era, era_year, ""),
+            }
+        )
+    return sorted(
+        matches,
+        key=lambda item: (
+            {"china": 0, "japan": 1, "korea": 2}.get(item.get("region"), 9),
+            item["polity"],
+            item["era"],
+        ),
+    )
 
 
 def source_era_to_western_year(
@@ -236,6 +359,85 @@ def western_to_orthodox_structured(
 
 def _format_source(era: dict[str, Any], era_year: int, rest: str) -> str:
     return f"{_display_polity(era['polity'])}{era['name']}{int_to_cn(era_year)}年{rest}"
+
+
+def _parse_interchange_source(text: str) -> dict[str, Any]:
+    import re
+
+    cleaned = "".join(text.strip().split())
+    match = re.match(r"^(?:公元|西历|西曆|西暦|CE)?(?P<year>\d{1,4})年(?P<rest>.*)$", cleaned)
+    if match:
+        western_year = int(match.group("year"))
+        if western_year < 1:
+            raise MingZhengshuoError("错误：公元年份必须大于零。")
+        rest = match.group("rest")
+        return {
+            "kind": "gregorian",
+            "text": f"公元{western_year}年{rest}",
+            "western_year": western_year,
+            "rest": rest,
+        }
+
+    parsed = parse(text)
+    era = resolve_era(
+        parsed["era_name"],
+        parsed["era_year"],
+        polity_hint=parsed["polity_hint"],
+    )
+    western_year = int(era["start_year"]) + parsed["era_year"] - 1
+    return {
+        "kind": "era",
+        "text": _format_source(era, parsed["era_year"], parsed["rest"]),
+        "western_year": western_year,
+        "rest": parsed["rest"],
+        "polity": era["polity"],
+        "era": era["name"],
+        "era_year": parsed["era_year"],
+        "calendar": era.get("calendar"),
+    }
+
+
+def _gregorian_result(western_year: int, rest: str) -> dict[str, Any]:
+    return {
+        "polity": "公元",
+        "era": "公元",
+        "era_year": western_year,
+        "mode": "gregorian",
+        "calendar": "gregorian",
+        "text": f"公元{western_year}年{rest}",
+    }
+
+
+def _era_end_year(era: dict[str, Any]) -> int | None:
+    if era.get("end_year") is not None:
+        return int(era["end_year"])
+    if era.get("max_year") is not None:
+        return int(era["start_year"]) + int(era["max_year"])
+    return None
+
+
+def _target_matches_era(target: str, era: dict[str, Any]) -> bool:
+    normalized = target.strip().lower()
+    if normalized in {"", "all", "全部", "すべて"}:
+        return True
+
+    region_aliases = {
+        "china": {"china", "chinese", "中国", "中國"},
+        "japan": {"japan", "japanese", "日本"},
+        "korea": {"korea", "korean", "朝鲜", "朝鮮", "韩国", "韓國"},
+    }
+    for region, aliases in region_aliases.items():
+        if normalized in {alias.lower() for alias in aliases}:
+            return era.get("region") == region
+
+    labels = {
+        era["name"],
+        era["polity"],
+        _display_polity(era["polity"]),
+        *era.get("aliases", []),
+        *era.get("polity_aliases", []),
+    }
+    return normalized in {label.lower() for label in labels}
 
 
 def _hint_matches_era(polity_hint: str, era: dict[str, Any]) -> bool:

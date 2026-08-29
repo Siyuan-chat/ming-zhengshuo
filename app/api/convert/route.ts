@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { convertEra } from "@/app/lib/mingZhengshuo";
+import { interchangeEra } from "@/app/lib/mingZhengshuo";
 
 const MAX_BODY_BYTES = 1024;
 const MAX_INPUT_LENGTH = 80;
@@ -22,7 +22,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = (await request.json()) as { text?: string };
+    const body = (await request.json()) as {
+      text?: string;
+      target?: string;
+      calendarMode?: string;
+    };
     if (typeof body.text !== "string") {
       return NextResponse.json(
         { ok: false, error: "错误：请输入年号原文。" },
@@ -38,7 +42,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = convertEra(text);
+    const result = interchangeEra(
+      text,
+      typeof body.target === "string" ? body.target : "orthodox",
+      typeof body.calendarMode === "string" ? body.calendarMode : "preserve",
+    );
     return NextResponse.json({ ok: true, result });
   } catch (error) {
     return NextResponse.json(

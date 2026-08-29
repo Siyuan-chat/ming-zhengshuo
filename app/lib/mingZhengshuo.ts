@@ -13,6 +13,7 @@ type Era = {
   max_year: number | null;
   aliases?: string[];
   polity_aliases?: string[];
+  calendar?: string;
 };
 
 type OrthodoxySegment = {
@@ -44,6 +45,43 @@ export type ConversionResult = {
   };
 };
 
+export type CalendarContract = {
+  mode: "preserve";
+  sourceCalendar: string;
+  targetCalendars: string[];
+  precision: "year";
+  dayConversionApplied: false;
+  preservedText: string;
+  note: string;
+};
+
+export type InterchangeMatch = {
+  polity: string;
+  region?: string;
+  era: string;
+  eraYear: number;
+  text: string;
+  calendar?: string;
+};
+
+export type InterchangeResult = {
+  input: string;
+  output: string;
+  westernYear: number;
+  target: string;
+  source: {
+    kind: "era" | "gregorian";
+    polity: string;
+    era: string;
+    eraYear: number;
+    rest: string;
+    text: string;
+    calendar: string;
+  };
+  matches: InterchangeMatch[];
+  calendar: CalendarContract;
+};
+
 type ParsedInput = {
   polityHint: string | null;
   eraName: string;
@@ -70,6 +108,7 @@ const japaneseHistoricalEras = (japaneseHistoricalErasData as JapaneseHistorical
     aliases,
     polity_aliases:
       court === "共" ? ["日本北朝", "北朝", "日本南朝", "南朝"] : undefined,
+    calendar: "japanese_lunisolar",
   }),
 );
 
@@ -95,6 +134,7 @@ const chineseMedievalEras = (suiTangFiveDynastiesErasData as ChineseMedievalEraR
       polity.replace("后", "後"),
       `${polity.replace("后", "後")}朝`,
     ],
+    calendar: "chinese_lunisolar",
   }),
 );
 
@@ -163,6 +203,166 @@ export function convertEra(input: string, profile = "default"): ConversionResult
     },
     orthodox,
   };
+}
+
+export function interchangeEra(
+  input: string,
+  target = "orthodox",
+  calendarMode = "preserve",
+  profile = "default",
+): InterchangeResult {
+  if (calendarMode !== "preserve") {
+    throw new Error(
+      `错误：历法模式“${calendarMode}”尚未实现；当前仅支持 preserve（月日原样保留）。`,
+    );
+  }
+
+  const source = parseInterchangeSource(input);
+  let matches: InterchangeMatch[];
+  const normalizedTarget = target.trim();
+
+  if (["gregorian", "ce", "公元", "西历", "西曆", "西暦"].includes(normalizedTarget)) {
+    matches = [
+      {
+        polity: "公元",
+        era: "公元",
+        eraYear: source.westernYear,
+        text: `公元${source.westernYear}年${source.rest}`,
+        calendar: "gregorian",
+      },
+    ];
+  } else if (["orthodox", "正朔", "default"].includes(normalizedTarget)) {
+    const orthodox = westernToOrthodox(source.westernYear, source.rest, profile);
+    matches = [
+      {
+        polity: orthodox.polity,
+        era: orthodox.era,
+        eraYear: orthodox.eraYear,
+        text: orthodox.text,
+        calendar: "rule_based_or_gregorian",
+      },
+    ];
+  } else {
+    matches = westernToEras(source.westernYear, normalizedTarget).map((item) => ({
+      ...item,
+      text: `${item.text}${source.rest}`,
+    }));
+    if (matches.length === 0) {
+      throw new Error(
+        `错误：公元${source.westernYear}年没有匹配目标“${normalizedTarget}”的年号数据。`,
+      );
+    }
+  }
+
+  const parts = [source.text];
+  const gregorianText = `公元${source.westernYear}年${source.rest}`;
+  const targetIsGregorian = ["gregorian", "ce", "公元", "西历", "西曆", "西暦"].includes(
+    normalizedTarget,
+  );
+  if (source.kind !== "gregorian" && !targetIsGregorian) parts.push(gregorianText);
+  matches.forEach((item) => {
+    if (!parts.includes(item.text)) parts.push(item.text);
+  });
+
+  return {
+    input,
+    output: parts.join(" = "),
+    westernYear: source.westernYear,
+    target: normalizedTarget,
+    source,
+    matches,
+    calendar: {
+      mode: "preserve",
+      sourceCalendar: source.calendar,
+      targetCalendars: Array.from(
+        new Set(matches.map((item) => item.calendar ?? "rule_based_or_gregorian")),
+      ).sort(),
+      precision: "year",
+      dayConversionApplied: false,
+      preservedText: source.rest,
+      note: "月日原样保留，尚未进行阴阳历、儒略历或格里历之间的换算。",
+    },
+  };
+}
+
+function parseInterchangeSource(input: string): InterchangeResult["source"] & {
+  westernYear: number;
+} {
+  const cleaned = input.trim().replace(/\s+/g, "");
+  const gregorian = cleaned.match(/^(?:公元|西历|西曆|西暦|CE)?(\d{1,4})年(.*)$/u);
+  if (gregorian) {
+    const westernYear = Number(gregorian[1]);
+    if (westernYear < 1) throw new Error("错误：公元年份必须大于零。");
+    return {
+      kind: "gregorian",
+      polity: "公元",
+      era: "公元",
+      eraYear: westernYear,
+      westernYear,
+      rest: gregorian[2],
+      text: `公元${westernYear}年${gregorian[2]}`,
+      calendar: "gregorian",
+    };
+  }
+
+  const parsed = parseInput(input);
+  const era = resolveEra(parsed.eraName, parsed.eraYear, parsed.polityHint);
+  const westernYear = era.start_year + parsed.eraYear - 1;
+  return {
+    kind: "era",
+    polity: displayPolity(era.polity),
+    era: era.name,
+    eraYear: parsed.eraYear,
+    westernYear,
+    rest: parsed.rest,
+    text: `${displayPolity(era.polity)}${era.name}${intToCn(parsed.eraYear)}年${parsed.rest}`,
+    calendar: era.calendar ?? "unknown",
+  };
+}
+
+function westernToEras(westernYear: number, target: string): InterchangeMatch[] {
+  return eras
+    .filter((era) => targetMatchesEra(target, era))
+    .filter((era) => {
+      const endYear = era.end_year ?? (era.max_year === null ? null : era.start_year + era.max_year);
+      return westernYear >= era.start_year && (endYear === null || westernYear < endYear);
+    })
+    .map((era) => {
+      const eraYear = westernYear - era.start_year + 1;
+      return {
+        polity: era.polity,
+        region: era.region,
+        era: era.name,
+        eraYear,
+        text: `${displayPolity(era.polity)}${era.name}${intToCn(eraYear)}年`,
+        calendar: era.calendar,
+      };
+    })
+    .sort((a, b) => `${a.region}${a.polity}${a.era}`.localeCompare(`${b.region}${b.polity}${b.era}`));
+}
+
+function targetMatchesEra(target: string, era: Era) {
+  const normalized = target.trim().toLowerCase();
+  if (["", "all", "全部", "すべて"].includes(normalized)) return true;
+  const regionAliases: Record<string, string[]> = {
+    china: ["china", "chinese", "中国", "中國"],
+    japan: ["japan", "japanese", "日本"],
+    korea: ["korea", "korean", "朝鲜", "朝鮮", "韩国", "韓國"],
+  };
+  for (const [region, aliases] of Object.entries(regionAliases)) {
+    if (aliases.map((alias) => alias.toLowerCase()).includes(normalized)) {
+      return era.region === region;
+    }
+  }
+  return [
+    era.name,
+    era.polity,
+    displayPolity(era.polity),
+    ...(era.aliases ?? []),
+    ...(era.polity_aliases ?? []),
+  ]
+    .map((label) => label.toLowerCase())
+    .includes(normalized);
 }
 
 function parseInput(input: string): ParsedInput {
