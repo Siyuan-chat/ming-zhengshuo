@@ -8,7 +8,7 @@
   "theme_color": "#8f2418",
   "icons": [
     {
-      "src": "/seal-zhuanshu.png",
+      "src": "seal-zhuanshu.png",
       "sizes": "200x200",
       "type": "image/png",
       "purpose": "any"

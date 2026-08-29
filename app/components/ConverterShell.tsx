@@ -1,29 +1,9 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { convertEra, type ConversionResult } from "@/app/lib/mingZhengshuo";
 
-type ConversionPayload = {
-  input: string;
-  output: string;
-  westernYear: number;
-  source: {
-    polity: string;
-    era: string;
-    eraYear: number;
-    rest: string;
-  };
-  orthodox: {
-    polity: string;
-    era: string;
-    eraYear: number;
-    mode: string;
-    text: string;
-  };
-};
-
-type ConvertResponse =
-  | { ok: true; result: ConversionPayload }
-  | { ok: false; error: string };
+type ConversionPayload = ConversionResult;
 
 const examples = [
   "清顺治二年",
@@ -88,27 +68,20 @@ export function ConverterShell() {
     return "待输入";
   }, [error, loading, result]);
 
-  async function submit(event?: FormEvent) {
+  function submit(event?: FormEvent) {
     event?.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch("/api/convert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const payload = (await response.json()) as ConvertResponse;
-      if (!payload.ok) {
-        setResult(null);
-        setError(payload.error);
-        return;
+      const input = text.trim();
+      if (input.length > 80) {
+        throw new Error("错误：输入过长，请控制在 80 字以内。");
       }
-      setResult(payload.result);
-    } catch {
+      setResult(convertEra(input));
+    } catch (caught) {
       setResult(null);
-      setError("错误：暂时无法完成转换，请稍后再试。");
+      setError(caught instanceof Error ? caught.message : "错误：转换失败。");
     } finally {
       setLoading(false);
     }
@@ -121,7 +94,7 @@ export function ConverterShell() {
           <header className="masthead">
             <div className="brand-row">
               <div className="seal" aria-hidden="true">
-                <img src="/seal-zhuanshu.png" alt="" />
+                <img src="seal-zhuanshu.png" alt="" />
               </div>
               <div>
                 <p className="eyebrow">东亚年号与正统线转换</p>
@@ -186,7 +159,7 @@ export function ConverterShell() {
 
         <aside className="side">
           <div className="visual-plate" aria-hidden="true">
-            <img className="visual-image" src="/og.png" alt="" />
+            <img className="visual-image" src="og.png" alt="" />
           </div>
 
           <section className="result-panel" aria-live="polite">
