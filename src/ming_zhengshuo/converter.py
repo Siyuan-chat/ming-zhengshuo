@@ -242,6 +242,14 @@ def _hint_matches_era(polity_hint: str, era: dict[str, Any]) -> bool:
     hint = polity_hint.strip()
     if hint == era["polity"]:
         return True
+    if hint == "南朝":
+        return era["polity"] == "日本南朝" or hint in era.get(
+            "polity_aliases", []
+        )
+    if hint == "北朝":
+        return era["polity"] == "日本北朝" or hint in era.get(
+            "polity_aliases", []
+        )
     region = era.get("region")
     if hint in {"日本", "倭"}:
         return region == "japan" or era["polity"] == "日本"

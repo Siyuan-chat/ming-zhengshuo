@@ -48,6 +48,9 @@ test("server-renders the MingZhengshuo tool shell", async () => {
   assert.match(html, /规则边界/);
   assert.match(html, /不宣称排除其他史观/);
   assert.match(html, /五胡十六国/);
+  assert.match(html, /五代正朔取后唐/);
+  assert.match(html, /后唐之后取南唐/);
+  assert.match(html, /日本大化元年/);
   assert.match(html, /SoftwareApplication/);
   assert.match(html, /seal-zhuanshu\.png/);
   assert.match(html, /favicon\.png/);
@@ -109,4 +112,23 @@ test("exposes public indexing files and rejects oversized conversion input", asy
   });
   assert.equal(rejected.status, 413);
   assert.match(await rejected.text(), /输入过长/);
+});
+
+test("converts ancient Japanese eras through the Tang and Southern Tang line", async () => {
+  const cases = [
+    ["日本大化元年", "日本大化元年 = 公元645年 = 唐贞观十九年"],
+    ["日本慶応三年", "日本庆应三年 = 公元1867年 = 大明永历二百二十一年"],
+    ["日本延长元年", "日本延长元年 = 公元923年 = 后唐同光元年"],
+    ["日本承平七年", "日本承平七年 = 公元937年 = 南唐升元元年"],
+  ];
+
+  for (const [text, output] of cases) {
+    const response = await fetchWorker("/api/convert", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).result.output, output);
+  }
 });

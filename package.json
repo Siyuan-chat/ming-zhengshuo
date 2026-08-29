@@ -12,7 +12,7 @@
     "build:pages": "vite build --config vite.pages.config.ts",
     "start": "vinext start",
     "test": "pnpm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern dist-pages --ignore-pattern .next"
   },
   "dependencies": {
     "next": "16.2.6",

@@ -16,7 +16,11 @@ YEAR_RE = re.compile(
 )
 
 COMMON_POLITY_HINTS = [
+    "日本南朝",
+    "日本北朝",
     "大韩帝国",
+    "南朝",
+    "北朝",
     "清朝",
     "日本",
     "朝鲜",
@@ -35,10 +39,10 @@ def parse(text: str, eras: list[dict[str, Any]] | None = None) -> dict[str, Any]
 
     eras = eras or load_eras()
     matches: list[tuple[int, str | None, str, str]] = []
+    hints = _known_hints(eras)
 
     for era in eras:
         labels = [era["name"], *era.get("aliases", [])]
-        hints = _known_hints(eras)
         for label in labels:
             if cleaned.startswith(label):
                 matches.append((len(label), None, label, cleaned[len(label) :]))

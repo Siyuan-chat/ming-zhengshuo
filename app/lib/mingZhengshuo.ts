@@ -1,5 +1,7 @@
 import erasData from "@/src/ming_zhengshuo/data/eras.json";
+import japaneseHistoricalErasData from "@/src/ming_zhengshuo/data/japanese_historical_eras.json";
 import profilesData from "@/src/ming_zhengshuo/data/orthodoxy_profiles.json";
+import suiTangFiveDynastiesErasData from "@/src/ming_zhengshuo/data/sui_tang_five_dynasties_eras.json";
 
 type Era = {
   id: string;
@@ -49,9 +51,70 @@ type ParsedInput = {
   rest: string;
 };
 
-const eras = erasData as Era[];
+type JapaneseHistoricalEraRow = [
+  name: string,
+  startYear: number,
+  maxYear: number,
+  aliases: string[],
+  court?: "北" | "南" | "共",
+];
+
+const japaneseHistoricalEras = (japaneseHistoricalErasData as JapaneseHistoricalEraRow[]).map(
+  ([name, startYear, maxYear, aliases, court], index): Era => ({
+    id: `japan_historical_${String(index + 1).padStart(3, "0")}`,
+    name,
+    polity: court && court !== "共" ? `日本${court}朝` : "日本",
+    region: "japan",
+    start_year: startYear,
+    max_year: maxYear,
+    aliases,
+    polity_aliases:
+      court === "共" ? ["日本北朝", "北朝", "日本南朝", "南朝"] : undefined,
+  }),
+);
+
+type ChineseMedievalEraRow = [
+  name: string,
+  polity: string,
+  startYear: number,
+  maxYear: number,
+  aliases: string[],
+];
+
+const chineseMedievalEras = (suiTangFiveDynastiesErasData as ChineseMedievalEraRow[]).map(
+  ([name, polity, startYear, maxYear, aliases], index): Era => ({
+    id: `china_medieval_${String(index + 1).padStart(3, "0")}`,
+    name,
+    polity,
+    region: "china",
+    start_year: startYear,
+    max_year: maxYear,
+    aliases,
+    polity_aliases: [
+      `${polity}朝`,
+      polity.replace("后", "後"),
+      `${polity.replace("后", "後")}朝`,
+    ],
+  }),
+);
+
+const eras = [...(erasData as Era[]), ...japaneseHistoricalEras, ...chineseMedievalEras];
 const profiles = profilesData as Record<string, OrthodoxySegment[]>;
-const commonHints = ["大韩帝国", "清朝", "日本", "朝鲜", "韩国", "大韩", "中国", "清", "倭"];
+const commonHints = [
+  "日本南朝",
+  "日本北朝",
+  "大韩帝国",
+  "南朝",
+  "北朝",
+  "清朝",
+  "日本",
+  "朝鲜",
+  "韩国",
+  "大韩",
+  "中国",
+  "清",
+  "倭",
+];
 const digits: Record<string, number> = {
   零: 0,
   "〇": 0,
@@ -199,7 +262,12 @@ function westernToOrthodox(westernYear: number, rest: string, profile: string) {
   if (segment.mode === "continuous_era") {
     const eraYear = westernYear - (segment.base_year ?? westernYear) + 1;
     const era = segment.base_era ?? "连续";
-    const prefix = era === "永历" ? "大明" : era === "祥兴" ? "宋" : displayPolity(segment.target_polity);
+    const prefix =
+      era === "永历"
+        ? "大明"
+        : era === "祥兴"
+          ? "宋"
+          : displayPolity(segment.target_polity);
     return {
       polity: segment.target_polity,
       era,
@@ -317,6 +385,12 @@ function knownHints() {
 
 function hintMatchesEra(hint: string, era: Era) {
   if (hint === era.polity) return true;
+  if (hint === "南朝") {
+    return era.polity === "日本南朝" || (era.polity_aliases ?? []).includes(hint);
+  }
+  if (hint === "北朝") {
+    return era.polity === "日本北朝" || (era.polity_aliases ?? []).includes(hint);
+  }
   if (["日本", "倭"].includes(hint)) return era.region === "japan" || era.polity === "日本";
   if (["朝鲜", "韩国", "大韩", "大韩帝国"].includes(hint)) {
     return era.region === "korea" || ["朝鲜", "大韩帝国"].includes(era.polity);

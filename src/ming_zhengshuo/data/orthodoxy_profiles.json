@@ -43,6 +43,57 @@
       "mode": "official_era"
     },
     {
+      "id": "sui",
+      "start_year": 589,
+      "end_year": 618,
+      "target_polity": "隋",
+      "mode": "official_era"
+    },
+    {
+      "id": "tang_early",
+      "start_year": 618,
+      "end_year": 690,
+      "target_polity": "唐",
+      "mode": "official_era"
+    },
+    {
+      "id": "wu_zhou",
+      "start_year": 690,
+      "end_year": 705,
+      "target_polity": "武周",
+      "mode": "official_era"
+    },
+    {
+      "id": "tang_restored",
+      "start_year": 705,
+      "end_year": 907,
+      "target_polity": "唐",
+      "mode": "official_era"
+    },
+    {
+      "id": "tang_tianyou_continuous",
+      "start_year": 907,
+      "end_year": 923,
+      "target_polity": "唐",
+      "mode": "continuous_era",
+      "base_era": "天祐",
+      "base_year": 904
+    },
+    {
+      "id": "later_tang",
+      "start_year": 923,
+      "end_year": 937,
+      "target_polity": "后唐",
+      "mode": "official_era"
+    },
+    {
+      "id": "southern_tang",
+      "start_year": 937,
+      "end_year": 960,
+      "target_polity": "南唐",
+      "mode": "official_era"
+    },
+    {
       "id": "northern_song",
       "start_year": 960,
       "end_year": 1127,
