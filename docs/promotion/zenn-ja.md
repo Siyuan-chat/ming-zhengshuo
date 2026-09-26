@@ -3,7 +3,7 @@ title: "東アジアの元号を双方向変換する『明正朔』を作った
 emoji: "🗓️"
 type: "tech"
 topics: ["python", "cli", "歴史", "aiエージェント", "元号変換"]
-published: true
+published: false
 ---
 
 ![明正朔の日本語画面](https://raw.githubusercontent.com/Siyuan-chat/ming-zhengshuo/main/public/promotion/demo-poster-ja.png)
@@ -12,8 +12,8 @@ published: true
 
 最初は単純な換算表で済むと思っていました。しかし実際に作り始めると、南北朝のように複数の朝廷が並立する年があり、一つの答えだけを返す設計では情報を落としてしまいます。そこで、元号年と西暦年を往復でき、別地域の同時代の元号も引けるツールとして「明正朔（Ming Zhengshuo）」を作りました。
 
-- Web版：https://siyuan-chat.github.io/ming-zhengshuo/
-- GitHub：https://github.com/Siyuan-chat/ming-zhengshuo
+- Web版: https://siyuan-chat.github.io/ming-zhengshuo/
+- GitHub: https://github.com/Siyuan-chat/ming-zhengshuo
 
 変換は言語モデルの推測ではなく、収録データとルールを使う決定論的なエンジンで行います。日本については大化から令和までの公年号248件に加え、南北朝の並行元号や主な表記揺れを収録しています。中国・朝鮮の元号も検索できます。
 
@@ -84,14 +84,14 @@ for match in result["matches"]:
 
 ## Agentから呼び出す
 
-このリポジトリのルートはAgent Skills互換の構成になっており、`SKILL.md` に使い方と変換ルールを書いています。Skills CLIを使う場合は、利用したいプロジェクトのディレクトリで次のように追加できます。
+このリポジトリのルートはAgent Skills互換の構成になっており、`SKILL.md` に使い方と守るべき変換境界を書いています。Skills CLIを使う場合は、利用したいプロジェクトのディレクトリで次のように追加できます。
 
 ```powershell
 $env:DISABLE_TELEMETRY="1"
 pnpm dlx skills add Siyuan-chat/ming-zhengshuo --skill ming-zhengshuo --agent codex --copy --yes
 ```
 
-プロジェクトへのSkillインストールと、インストール先でのスクリプト実行までは確認しています。必要ならJSON CLIをツールとして明示的に登録することもできます。
+プロジェクトへのSkillインストールと、インストール先でのスクリプト実行までは確認しています。Skillを自動で見つけて呼び出すかどうかはAgentの宿主側の実装によるため、必要ならJSON CLIをツールとして明示的に登録するのが確実です。
 
 なお、現在扱うのは年単位です。「同治五年三月初八」のような入力では月日を原文のまま残し、JSONにも `precision: "year"` と記録します。
 
