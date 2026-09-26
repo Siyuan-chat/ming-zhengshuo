@@ -12,8 +12,8 @@ published: true
 
 最初は単純な換算表で済むと思っていました。しかし実際に作り始めると、南北朝のように複数の朝廷が並立する年があり、一つの答えだけを返す設計では情報を落としてしまいます。そこで、元号年と西暦年を往復でき、別地域の同時代の元号も引けるツールとして「明正朔（Ming Zhengshuo）」を作りました。
 
-- Web版: https://siyuan-chat.github.io/ming-zhengshuo/
-- GitHub: https://github.com/Siyuan-chat/ming-zhengshuo
+- Web版：https://siyuan-chat.github.io/ming-zhengshuo/
+- GitHub：https://github.com/Siyuan-chat/ming-zhengshuo
 
 変換は言語モデルの推測ではなく、収録データとルールを使う決定論的なエンジンで行います。日本については大化から令和までの公年号248件に加え、南北朝の並行元号や主な表記揺れを収録しています。中国・朝鮮の元号も検索できます。
 
