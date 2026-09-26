@@ -41,7 +41,8 @@ body {
 
 button,
 input,
-select {
+select,
+a {
   font: inherit;
 }
 
@@ -95,6 +96,14 @@ button {
   margin-bottom: 22px;
 }
 
+.masthead-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
 .language-switch {
   display: flex;
   flex-wrap: wrap;
@@ -113,6 +122,29 @@ button {
   border-color: var(--cinnabar);
   background: rgba(169, 52, 36, 0.1);
   color: var(--cinnabar-dark);
+}
+
+.github-link {
+  color: var(--cinnabar-dark);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.github-link-header {
+  border: 1px solid rgba(52, 65, 54, 0.24);
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--bronze-dark);
+  padding: 7px 11px;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(169, 52, 36, 0.5);
+  outline-offset: 3px;
 }
 
 .brand-row {
@@ -457,6 +489,20 @@ h1 {
   line-height: 1.6;
 }
 
+.result-github-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: 12px 0 0;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 @media (max-width: 920px) {
   .shell {
     grid-template-columns: 1fr;
@@ -507,6 +553,14 @@ h1 {
 
   .facts {
     grid-template-columns: 1fr;
+  }
+
+  .masthead-tools {
+    align-items: stretch;
+  }
+
+  .github-link-header {
+    text-align: center;
   }
 
   .actions {

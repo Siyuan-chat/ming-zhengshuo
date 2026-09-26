@@ -23,6 +23,9 @@ const copy = {
     statusIdle: "待输入",
     statusDone: "互换完成",
     statusError: "待更正",
+    githubHeader: "GitHub · 源码",
+    githubPrompt: "以后还要查年号？可在 GitHub 收藏明正朔。",
+    githubResult: "在 GitHub 收藏",
     principlesLabel: "我们的原则",
     resultTitle: "校年札记",
     source: "来源",
@@ -79,6 +82,9 @@ const copy = {
     statusIdle: "Ready",
     statusDone: "Complete",
     statusError: "Needs correction",
+    githubHeader: "GitHub · Source",
+    githubPrompt: "Need it again? Star Ming Zhengshuo on GitHub.",
+    githubResult: "Star on GitHub",
     principlesLabel: "Research principles",
     resultTitle: "Conversion record",
     source: "Source",
@@ -135,6 +141,9 @@ const copy = {
     statusIdle: "入力待ち",
     statusDone: "変換完了",
     statusError: "要修正",
+    githubHeader: "GitHub · ソース",
+    githubPrompt: "また年号を調べるなら、GitHubで明正朔をStar。",
+    githubResult: "GitHubでStar",
     principlesLabel: "研究上の原則",
     resultTitle: "変換記録",
     source: "入力元",
@@ -223,17 +232,20 @@ export function ConverterShell() {
       <div className="shell">
         <section>
           <header className="masthead">
-            <div className="language-switch" aria-label="Language / 语言 / 言語">
-              {(["zh", "en", "ja"] as const).map((value) => (
-                <button
-                  aria-pressed={language === value}
-                  key={value}
-                  onClick={() => setLanguage(value)}
-                  type="button"
-                >
-                  {copy[value].htmlLabel}
-                </button>
-              ))}
+            <div className="masthead-tools">
+              <div className="language-switch" aria-label="Language / 语言 / 言語">
+                {(["zh", "en", "ja"] as const).map((value) => (
+                  <button
+                    aria-pressed={language === value}
+                    key={value}
+                    onClick={() => setLanguage(value)}
+                    type="button"
+                  >
+                    {copy[value].htmlLabel}
+                  </button>
+                ))}
+              </div>
+              <a className="github-link github-link-header" href="https://github.com/Siyuan-chat/ming-zhengshuo" rel="noreferrer" target="_blank">{t.githubHeader}</a>
             </div>
             <div className="brand-row">
               <div className="seal" aria-hidden="true"><img src="seal-zhuanshu.png" alt="" /></div>
@@ -280,6 +292,7 @@ export function ConverterShell() {
                   <div className="fact"><span>{t.targetResult}</span><strong>{result.matches.map((item) => item.text).join("、")}</strong></div>
                 </div>
                 <p className="footer-note">{t.calendarPrefix}{t.calendarDetail} {t.calendarSuffix}</p>
+                <p className="result-github-cta"><span>{t.githubPrompt}</span><a className="github-link" href="https://github.com/Siyuan-chat/ming-zhengshuo" rel="noreferrer" target="_blank">{t.githubResult}</a></p>
               </>
             ) : (
               <><p className="placeholder">{t.empty}</p>{error && <p className="placeholder error">{error}</p>}</>
